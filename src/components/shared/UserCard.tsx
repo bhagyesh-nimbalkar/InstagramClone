@@ -25,8 +25,8 @@ const UserCard = ({ user }: UserCardProps) => {
         </p>
       </div>
 
-      <Button type="button" size="sm" className="shad-button_primary px-5">
-        Follow
+      <Button type="button" size="sm" className="shad-all-user_button px-5">
+        View Profile
       </Button>
     </Link>
   );

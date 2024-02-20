@@ -10,8 +10,10 @@ import {
   import { Button } from "@/components/ui/button";
   import { LikedPosts } from "@/_root/pages";
   import { useUserContext } from "@/context/AuthContext";
-  import { useGetUserById } from "@/lib/react-query/queriesAndMutations";
+  import { useFollowUser, useFollowers, useGetUserById} from "@/lib/react-query/queriesAndMutations";
   import { GridPostList, Loader } from "@/components/shared";
+import { Models } from "appwrite";
+import { checkIsFollower } from "@/lib/utils";
   
   interface StabBlockProps {
     value: string | number;
@@ -29,16 +31,32 @@ import {
     const { id } = useParams();
     const { user } = useUserContext();
     const { pathname } = useLocation();
-  
-    const { data: currentUser } = useGetUserById(id || "");
-    console.log(currentUser);
-    if (!currentUser)
+
+    const { data: currentUser,isPending:isGeetingUser1} = useGetUserById(id || '');
+    const {data:currentUser2,isPending:isGeetingUser2} = useFollowers(id || '');
+    
+    const followList = (!currentUser2)?[]:currentUser2?.followers.map((user:Models.Document)=>user.$id);
+    const {mutate:followUser,isPending:isFollowing} = useFollowUser();
+    console.log(currentUser2);
+    const handleFollower = (e:React.MouseEvent)=>{
+        e.stopPropagation();
+        let followerArray = [...followList];
+
+        if(followerArray.includes(user.id)){
+           followerArray = followerArray.filter((Id)=>Id!==user.id);
+        }
+        else{
+           followerArray.push(user.id);
+        }
+        console.log(followerArray);
+        followUser({userId:currentUser?.$id || '',followerArray});
+    }
+    if (!currentUser || isGeetingUser1 || isGeetingUser2)
       return (
         <div className="flex-center w-full h-full">
           <Loader />
         </div>
       );
-  
     return (
       <div className="profile-container">
         <div className="profile-inner_container">
@@ -62,8 +80,8 @@ import {
   
               <div className="flex gap-8 mt-10 items-center justify-center xl:justify-start flex-wrap z-20">
                 <StatBlock value={currentUser.posts.length} label="Posts" />
-                <StatBlock value={0} label="Followers" />
-                <StatBlock value={0} label="Following" />
+                <StatBlock value={currentUser2?.followers.length || 0} label="Followers" />
+                <StatBlock value={currentUser.following.length} label="Following" />
               </div>
   
               <p className="small-medium md:base-medium text-justify xl:text-left mt-7 max-w-screen-sm">
@@ -92,8 +110,8 @@ import {
                 </Link>
               </div>
               <div className={`${user.id === id && "hidden"}`}>
-                <Button type="button" className="shad-button_primary px-8">
-                  Follow
+                <Button type="button" onClick={(e)=>handleFollower(e)}  className={`${checkIsFollower(followList,user.id)?'shad-button_dark_4 outline-2':'shad-button_primary '}px-8`}>
+                  {isFollowing?<Loader/>:checkIsFollower(followList,user.id)?'Unfollow':'follow'}
                 </Button>
               </div>
             </div>

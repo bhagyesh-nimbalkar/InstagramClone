@@ -59,12 +59,11 @@ const SignupForm = () => {
       const isLoggedIn = await checkAuthUser();
 
       if (isLoggedIn) {
+        toast({ title: "Account Created Successfully!",variant:"default"});
         form.reset();
-
         navigate("/");
       } else {
         toast({ title: "Login failed. Please try again.",variant:"destructive"});
-        
         return;
       }
     } catch (error) {

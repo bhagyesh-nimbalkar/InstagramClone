@@ -40,6 +40,7 @@ const SigninForm = () => {
     const isLoggedIn = await checkAuthUser();
 
     if (isLoggedIn) {
+      toast({variant:"default",title: "Login Successful!"});
       form.reset();
       navigate("/");
     } else {

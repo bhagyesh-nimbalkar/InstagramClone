@@ -13,7 +13,7 @@ export const INITIAL_USER = {
 }
 const INITIAL_AUTH_STATE = {
     user:INITIAL_USER,
-    isLoading:false,
+    isLoading:true,
     isAuthenticated:false,
     setUser: () =>{},
     setIsAuthenticated: () =>{},
@@ -24,7 +24,7 @@ const AuthContext = createContext<IContextType>(INITIAL_AUTH_STATE);
 const AuthProvider = ({children}:{children:React.ReactNode}) => {
   const navigate = useNavigate();
   const [user,setUser] = useState<IUser>(INITIAL_USER);
-  const [isLoading,setIsLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState(true);
   const [isAuthenticated,setIsAuthenticated] = useState(false);
   useEffect(()=>{
     if(localStorage.getItem('cookieFallback') === '[]' || 
@@ -55,7 +55,7 @@ const AuthProvider = ({children}:{children:React.ReactNode}) => {
      }
   }
   const value = {
-    user,isLoading,isAuthenticated,setUser,setIsAuthenticated,setIsLoading,checkAuthUser,
+    user,isLoading,isAuthenticated,setUser,setIsAuthenticated,setIsLoading,checkAuthUser
   }
   return (
        <AuthContext.Provider value={value}>

@@ -7,9 +7,11 @@ import { useUserContext } from '@/context/AuthContext';
 const Topbar = () => {
   const {mutate:signOut,isSuccess} = useSignOutAccount();
   const navigate = useNavigate();
-  const {user} = useUserContext();
+  const {user,isLoading} = useUserContext();
   useEffect(()=>{
-     if(isSuccess) navigate(0);
+     if(isSuccess){
+        navigate(0);
+     }
   },[isSuccess,navigate])
   return (
     <section className='topbar'>
@@ -26,12 +28,12 @@ const Topbar = () => {
                 <Button variant="ghost" className='shad_button_ghost' onClick={()=>signOut()}>
                     <img src='/assets/icons/logout.svg' alt='logout'/>
                 </Button>
-                <Link to={`/profile/${user.id}`} className='flex-center gap-3'>
+                {isLoading?<div className='animate-pulse h-8 w-8 rounded-full bg-dark-4'></div>:<Link to={`/profile/${user.id}`} className='flex-center gap-3'>
                     <img src={user.imageUrl || '/assets/images/profile.png'}
                          alt="profile"
                          className='h-8 w-8 rounded-full'
                     />
-                </Link>
+                </Link>}
             </div>
         </div>
     </section>

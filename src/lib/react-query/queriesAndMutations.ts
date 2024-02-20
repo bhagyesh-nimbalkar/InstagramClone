@@ -25,13 +25,12 @@ import {
    searchPosts,
    savePost,
    deleteSavedPost,
+   followUser,
+   getFollowers,
  } from "@/lib/appwrite/api";
  import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
  
- // ============================================================
- // AUTH QUERIES
- // ============================================================
- 
+
  export const useCreateUserAccount = () => {
    return useMutation({
      mutationFn: (user: INewUser) => createUserAccount(user),
@@ -50,11 +49,7 @@ import {
      mutationFn: signOutAccount,
    });
  };
- 
- // ============================================================
- // POST QUERIES
- // ============================================================
- 
+
  export const useGetPosts = () => {
    return useInfiniteQuery({
      queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
@@ -167,6 +162,26 @@ import {
      },
    });
  };
+ export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      userId,
+      followerArray,
+    }: {
+      userId: string;
+      followerArray: string[];
+    }) => followUser(userId, followerArray),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_FOLLOWERS],
+      });
+    },
+  });
+};
  
  export const useSavePost = () => {
    const queryClient = useQueryClient();
@@ -186,6 +201,7 @@ import {
      },
    });
  };
+
  
  export const useDeleteSavedPost = () => {
    const queryClient = useQueryClient();
@@ -204,10 +220,24 @@ import {
      },
    });
  };
- 
- // ============================================================
- // USER QUERIES
- // ============================================================
+
+ export const useDeleteFollower = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (savedRecordId: string) => deleteFollower(savedRecordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_POSTS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+      });
+    },
+  });
+};
  
  export const useGetCurrentUser = () => {
    return useQuery({
@@ -230,7 +260,14 @@ import {
      enabled: !!userId,
    });
  };
- 
+ export const useFollowers= (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_FOLLOWERS, userId],
+    queryFn: () => getFollowers(userId),
+    enabled: !!userId,
+  });
+};
+
  export const useUpdateUser = () => {
    const queryClient = useQueryClient();
    return useMutation({

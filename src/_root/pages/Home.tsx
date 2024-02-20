@@ -5,6 +5,7 @@ import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queriesAndMuta
 import Loader from "@/components/shared/Loader";
 import PostCard from "@/components/shared/PostCard";
 import UserCard from "@/components/shared/UserCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = () => {
   // const { toast } = useToast();

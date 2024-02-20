@@ -13,7 +13,7 @@ const AllUsers = () => {
     
     return;
   }
-
+if(isLoading) return <Loader/>
   return (
     <div className="common-container">
       <div className="user-container">

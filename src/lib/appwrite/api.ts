@@ -93,7 +93,8 @@ export async function getCurrentUser() {
 export async function signOutAccount() {
   try {
     const session = await account.deleteSession("current");
-
+    if(!session) throw Error;
+    localStorage.removeItem('cookieFallback');
     return session;
   } catch (error) {
     console.log(error);
@@ -328,6 +329,44 @@ export async function likePost(postId: string, likesArray: string[]) {
     console.log(error);
   }
 }
+
+export async function followUser(userId: string, followerArray: string[]) {
+  const len = await getFollowers(userId);
+  if(len?.followers.length>0){
+    try {
+      const updatedFollower = await database.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.followingCollectionID,
+        userId,
+        {
+            followers: followerArray,
+        }
+      );
+  
+      if (!updatedFollower) throw Error;
+  
+      return updatedFollower;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  try {
+    const updatedFollower = await database.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.followingCollectionID,
+      userId,
+      {
+          followers: followerArray,
+      }
+    );
+
+    if (!updatedFollower) throw Error;
+
+    return updatedFollower;
+  } catch (error) {
+    console.log(error);
+  }
+}
 export async function savePost(userId: string, postId: string) {
   try {
     const updatedPost = await database.createDocument(
@@ -425,6 +464,20 @@ export async function getUserById(userId: string) {
 
     if (!user) throw Error;
 
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function getFollowers(userId: string) {
+  try {
+    const user = await database.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.followingCollectionID,
+      userId
+    );
+
+    if (!user) return [];
     return user;
   } catch (error) {
     console.log(error);

@@ -10,9 +10,11 @@ const LeftSidebar = () => {
   const {pathname} = useLocation();
   const {mutate:signOut,isSuccess} = useSignOutAccount();
   const navigate = useNavigate();
-  const {user} = useUserContext();
+  const {user,isLoading} = useUserContext();
   useEffect(()=>{
-     if(isSuccess) navigate(0);
+     if(isSuccess){
+      navigate(0);
+     }
   },[isSuccess,navigate])
   return (
     <nav className='leftsidebar'>
@@ -25,7 +27,14 @@ const LeftSidebar = () => {
                    height={36}
                 />
         </Link>
-        <Link to={`/profile/${user.id}`} className='flex-center gap-3'>
+        {isLoading?
+        (<div className='flex gap-2'>
+        <div className='animate-pulse h-14 w-14 rounded-full bg-dark-4'></div>
+        <div className='flex flex-center flex-col flex-1 w-full gap-3'>
+           <div className='h-3 w-full bg-dark-4 rounded-full'></div>
+           <div className='h-2 w-full bg-dark-4 rounded-full'></div>
+        </div>
+        </div>):(<Link to={`/profile/${user.id}`} className='flex-center gap-3'>
             <img src={user.imageUrl || '/assets/images/profile.png'}
                  alt="profile"
                  className='h-14 w-14 rounded-full'
@@ -34,7 +43,7 @@ const LeftSidebar = () => {
           <p className='body-bold'>{user.name}</p>
           <p className='small-regular text-light-3 hover:underline'>@{user.username}</p>
           </div>
-        </Link>
+        </Link>)}
         <ul className='flex flex-col gap-6'>
             {sidebarLinks.map((link:INavLink)=>{
               const isActive= pathname === link.route

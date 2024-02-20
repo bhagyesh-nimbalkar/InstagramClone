@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
 
-export default {
+module.exports = {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -14,6 +15,7 @@ export default {
       padding: '2rem',
       screens: {
         '2xl': '1400px',
+      
       },
     },
     extend: {
@@ -23,7 +25,8 @@ export default {
         'secondary-500': '#FFB620',
         'off-white': '#D0DFFF',
         'red': '#FF5A5A',
-        'destructive':'#760a0a',
+        'success':'#1ab09a',
+        'destructive':'#9b0a1d',
         'dark-1': '#000000',
         'dark-2': '#09090A',
         'dark-3': '#101012',
@@ -61,5 +64,5 @@ export default {
       },
     },
   },
-  plugins:[import('tailwindcss-animate')],
+  plugins: [import('tailwindcss-animate')],
 };
