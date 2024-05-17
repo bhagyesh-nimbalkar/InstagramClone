@@ -489,7 +489,9 @@ export async function getFollowers(userId: string) {
       userId
     );
 
-    if (!user) return [];
+    if (!user) return {
+      followers:[]
+    };
     return user;
   } catch (error) {
     console.log(error);
