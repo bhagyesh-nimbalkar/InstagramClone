@@ -1,5 +1,6 @@
 # Tech Stack
 - React.js
+- TypeScript
 - Tailwindcss
 - TanstackQuery
 - React Router
