@@ -24,7 +24,7 @@ const AuthContext = createContext<IContextType>(INITIAL_AUTH_STATE);
 const AuthProvider = ({children}:{children:React.ReactNode}) => {
   const navigate = useNavigate();
   const [user,setUser] = useState<IUser>(INITIAL_USER);
-  const [isLoading,setIsLoading] = useState(true);
+  const [isLoading,setIsLoading] = useState(false);
   const [isAuthenticated,setIsAuthenticated] = useState(false);
   useEffect(()=>{
     if(localStorage.getItem('cookieFallback') === '[]' || 

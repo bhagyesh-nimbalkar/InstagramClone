@@ -1,8 +1,7 @@
-import { ID, Query } from "appwrite";
+import { ID, Query,Models} from "appwrite";
 
 import { appwriteConfig, account, database, storage, avatars } from "./config";
-import { IUpdatePost, INewPost, INewUser, IUpdateUser } from "@/types";
-
+import { IUpdatePost, INewPost, INewUser, IUpdateUser} from "@/types";
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -188,9 +187,7 @@ export async function searchPosts(searchTerm: string) {
       appwriteConfig.postCollectionID,
       [Query.search("caption",searchTerm)]
     );
-
-    if (!posts) throw Error;
-
+    if(!posts) throw Error;
     return posts;
   } catch (error) {
     console.log(error);
@@ -204,14 +201,13 @@ export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
   }
 
   try {
-    const posts = await database.listDocuments(
+    const posts = await database.listDocuments<Models.Document>(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionID,
       queries
     );
 
-    if (!posts) throw Error;
-
+    if (!posts) return 
     return posts;
   } catch (error) {
     console.log(error);
@@ -332,7 +328,8 @@ export async function likePost(postId: string, likesArray: string[]) {
 
 export async function followUser(userId: string, followerArray: string[]) {
   const len = await getFollowers(userId);
-  if(len?.followers.length>0){
+
+  if(len){
     try {
       const updatedFollower = await database.updateDocument(
         appwriteConfig.databaseId,
@@ -391,6 +388,21 @@ export async function deleteSavedPost(savedRecordId: string) {
     const statusCode = await database.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.saveCollectionID,
+      savedRecordId
+    );
+
+    if (!statusCode) throw Error;
+
+    return { status: "Ok" };
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function deleteFollower(savedRecordId: string) {
+  try {
+    const statusCode = await database.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.followingCollectionID,
       savedRecordId
     );
 
@@ -477,7 +489,9 @@ export async function getFollowers(userId: string) {
       userId
     );
 
-    if (!user) return [];
+    if (!user) return {
+      followers:[]
+    };
     return user;
   } catch (error) {
     console.log(error);
