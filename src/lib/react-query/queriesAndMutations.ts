@@ -19,6 +19,7 @@ import {
    deletePost,
    likePost,
    getUserById,
+   deleteFollower,
    updateUser,
    getRecentPosts,
    getInfinitePosts,
